@@ -86,7 +86,7 @@
   .feat li::before { content: "★"; position: absolute; left: 4px; color: var(--gold); }
   .box { max-width: 360px; justify-self: center; border: 3px solid #000; box-shadow: 0 0 0 2px var(--line), 0 30px 60px rgba(0,0,0,.6); transform: rotate(-2deg); }
 
-  .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .controls { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
   .ctl { background: var(--panel); border: 1px solid var(--line); padding: 20px; }
   .ctl h3 { font-family: var(--pix); font-size: 11px; margin: 0 0 12px; }
   .ctl table { width: 100%; border-collapse: collapse; font-size: 15px; }
@@ -213,6 +213,7 @@
         <li>Specials, super meter, blocking, knockdowns and K.O. slow-mo</li>
         <li>Pixel art, chiptune music and arcade sound effects</li>
         <li>No download or install: runs in Chrome, Safari, Firefox or Edge</li>
+        <li>Works on phones and tablets with touch controls</li>
         <li>Runs smoothly on older laptops</li>
       </ul>
     </div>
@@ -223,7 +224,7 @@
 <section id="controls">
   <div class="wrap">
     <h2>CONTROLS</h2>
-    <p class="lede">Needs a keyboard (laptop or desktop). Hold back to block.</p>
+    <p class="lede">Play on a laptop with the keyboard, or on your phone with on-screen controls. Hold back to block.</p>
     <div class="controls">
       <div class="ctl">
         <h3 style="color:var(--red)">PLAYER 1</h3>
@@ -243,7 +244,17 @@
           <tr><td>Super (meter full)</td><td><kbd>I</kbd></td></tr>
         </table>
       </div>
+      <div class="ctl">
+        <h3 style="color:var(--gold)">PHONE / TABLET</h3>
+        <table>
+          <tr><td>Move / jump / crouch</td><td><kbd>STICK</kbd></td></tr>
+          <tr><td>Punch / Kick</td><td><kbd>PUNCH</kbd> <kbd>KICK</kbd></td></tr>
+          <tr><td>Specials</td><td><kbd>SP1</kbd> <kbd>SP2</kbd></td></tr>
+          <tr><td>Super / menus</td><td><kbd>SUPER</kbd> <kbd>START</kbd></td></tr>
+        </table>
+      </div>
     </div>
+    <p class="fine">Laptop extras: <kbd>Enter</kbd> start, <kbd>Esc</kbd> pause, <kbd>M</kbd> mute, <kbd>Backspace</kbd> back. On phones, turn sideways for the biggest view.</p>
   </div>
 </section>
 
