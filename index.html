@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Prison Brawl: Fort Dix Edition</title>
+<meta name="description" content="A 90s-style parody arcade fighter. Two heavyweights, one prison yard. Play in your browser for $1.99.">
+<meta property="og:title" content="Prison Brawl: Fort Dix Edition">
+<meta property="og:description" content="A 90s-style parody arcade fighter. Play in your browser for $1.99.">
+<meta property="og:image" content="https://matthewcodergamer.github.io/prison-brawl/assets/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Rubik:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0a12; --bg2: #14121f; --panel: #1b1829; --line: #2c2840;
+    --ink: #f4efe2; --muted: #a59fb5; --gold: #ffd84a; --red: #ff4d2e; --red-d: #8a1a0c; --blue: #4da3ff; --green: #7dff8a;
+    --pix: "Press Start 2P", monospace; --sans: Rubik, system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 17px/1.6 var(--sans); }
+  img { max-width: 100%; height: auto; display: block; }
+  .pix { image-rendering: pixelated; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 16px; }
+
+  header { position: sticky; top: 0; z-index: 10; background: rgba(11,10,18,0.88); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+  header .wrap { display: flex; align-items: center; justify-content: space-between; height: 60px; gap: 12px; }
+  .logo { font-family: var(--pix); font-size: 13px; color: var(--gold); text-decoration: none; white-space: nowrap; }
+  .logo span { color: var(--red); }
+
+  .btn { display: inline-flex; align-items: center; gap: 10px; border: 0; cursor: pointer; text-decoration: none;
+         font-family: var(--pix); font-size: 12px; color: #fff; background: var(--red); padding: 12px 18px;
+         box-shadow: 0 4px 0 var(--red-d); transition: transform .08s, filter .15s; white-space: nowrap; }
+  .btn:hover { filter: brightness(1.12); }
+  .btn:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--red-d); }
+  .btn.big { font-size: 18px; padding: 20px 28px; box-shadow: 0 6px 0 var(--red-d); }
+  .btn .price { color: var(--gold); }
+  .ghost { font-family: var(--pix); font-size: 10px; color: var(--muted); text-decoration: none; }
+  .ghost:hover { color: var(--ink); }
+
+  .hero { position: relative; overflow: hidden; border-bottom: 1px solid var(--line); }
+  .hero .bgimg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .28; filter: blur(2px); }
+  .hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(11,10,18,.2), var(--bg)); }
+  .hero .wrap { position: relative; z-index: 1; display: grid; grid-template-columns: 1.35fr 1fr; gap: 40px; align-items: center; padding-top: 56px; padding-bottom: 64px; }
+  .hero .cover { border: 3px solid #000; box-shadow: 0 0 0 2px var(--gold), 0 24px 60px rgba(0,0,0,.6); }
+  .tag { display: inline-block; font-family: var(--pix); font-size: 10px; color: #111; background: var(--gold); padding: 6px 10px; margin-bottom: 18px; }
+  h1 { font-family: var(--pix); font-size: clamp(26px, 4vw, 40px); line-height: 1.25; margin: 0 0 6px; color: var(--gold); text-shadow: 3px 3px 0 #7a0d0d; }
+  h1 em { font-style: normal; color: var(--red); display: block; }
+  .sub { font-family: var(--pix); font-size: 12px; margin: 0 0 22px; color: var(--ink); }
+  .pitch { color: var(--muted); margin: 0 0 28px; max-width: 46ch; }
+  .buyrow { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+  .fine { font-size: 13px; color: var(--muted); margin-top: 16px; }
+
+  section { padding: 72px 0; border-bottom: 1px solid var(--line); }
+  h2 { font-family: var(--pix); font-size: 18px; color: var(--gold); margin: 0 0 8px; line-height: 1.4; }
+  .lede { color: var(--muted); margin: 0 0 32px; }
+
+  .crt { position: relative; background: #000; padding: 14px; border-radius: 14px; border: 2px solid var(--line);
+         box-shadow: inset 0 0 0 2px #000, 0 30px 80px rgba(0,0,0,.6); }
+  .crt img { width: 100%; border-radius: 6px; }
+  .crt::after { content: ""; position: absolute; inset: 14px; border-radius: 6px; pointer-events: none;
+                background: repeating-linear-gradient(0deg, rgba(0,0,0,.18) 0 1px, transparent 1px 3px); }
+  .live { position: absolute; top: 26px; left: 26px; z-index: 2; font-family: var(--pix); font-size: 9px; color: #fff; background: rgba(0,0,0,.6); padding: 6px 8px; }
+  .live::before { content: "● "; color: var(--red); }
+
+  .shots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .shots button { padding: 0; border: 2px solid var(--line); background: #000; cursor: zoom-in; transition: border-color .15s, transform .15s; }
+  .shots button:hover { border-color: var(--gold); transform: translateY(-2px); }
+
+  .fighters { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .fighter { background: var(--panel); border: 1px solid var(--line); padding: 24px; position: relative; overflow: hidden; }
+  .fighter h3 { font-family: var(--pix); font-size: 16px; margin: 0 0 4px; }
+  .fighter .role { font-family: var(--pix); font-size: 9px; color: var(--muted); margin-bottom: 18px; }
+  .fighter.p1 h3 { color: var(--red); } .fighter.p2 h3 { color: var(--blue); }
+  .fighter ul { list-style: none; margin: 0; padding: 0; }
+  .fighter li { display: flex; gap: 12px; padding: 8px 0; border-top: 1px dashed var(--line); font-size: 15px; }
+  .fighter li b { font-family: var(--pix); font-size: 10px; color: var(--gold); min-width: 34px; padding-top: 3px; }
+  .stat { display: flex; align-items: center; gap: 10px; font-family: var(--pix); font-size: 9px; color: var(--muted); margin-bottom: 6px; }
+  .stat i { display: inline-block; width: 12px; height: 8px; background: var(--gold); margin-right: 3px; }
+  .stat i.off { background: var(--line); }
+
+  .feat { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
+  .feat ul { margin: 0; padding: 0; list-style: none; }
+  .feat li { padding: 12px 0 12px 34px; position: relative; border-bottom: 1px solid var(--line); }
+  .feat li::before { content: "★"; position: absolute; left: 4px; color: var(--gold); }
+  .box { max-width: 360px; justify-self: center; border: 3px solid #000; box-shadow: 0 0 0 2px var(--line), 0 30px 60px rgba(0,0,0,.6); transform: rotate(-2deg); }
+
+  .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .ctl { background: var(--panel); border: 1px solid var(--line); padding: 20px; }
+  .ctl h3 { font-family: var(--pix); font-size: 11px; margin: 0 0 12px; }
+  .ctl table { width: 100%; border-collapse: collapse; font-size: 15px; }
+  .ctl td { padding: 6px 0; border-top: 1px dashed var(--line); }
+  kbd { font-family: var(--pix); font-size: 9px; background: #000; border: 1px solid var(--line); border-bottom-width: 3px; padding: 3px 6px; color: var(--ink); }
+
+  .cta { text-align: center; background: radial-gradient(ellipse at center, #2a1018, var(--bg) 70%); }
+  .cta h2 { font-size: 24px; }
+  .price-big { font-family: var(--pix); font-size: 44px; color: var(--green); margin: 18px 0 26px; text-shadow: 3px 3px 0 #0d4a17; }
+
+  footer { padding: 36px 0 48px; color: var(--muted); font-size: 13px; }
+  footer .wrap { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+
+  .lightbox { position: fixed; inset: 0; z-index: 50; background: rgba(0,0,0,.92); display: none; align-items: center; justify-content: center; padding: 16px; cursor: zoom-out; }
+  .lightbox.on { display: flex; }
+  .lightbox img { max-height: 90vh; width: auto; border: 2px solid var(--gold); }
+
+  @media (max-width: 860px) {
+    .hero .wrap, .feat, .fighters, .controls { grid-template-columns: 1fr; }
+    .hero .wrap { padding-top: 32px; gap: 28px; }
+    .shots { grid-template-columns: 1fr 1fr; }
+    .box { max-width: 260px; }
+    .hidem { display: none; }
+  }
+  @media (max-width: 480px) { .shots { grid-template-columns: 1fr; } .btn.big { font-size: 14px; padding: 16px 20px; } .price-big { font-size: 34px; } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <a class="logo" href="#top">PRISON <span>BRAWL</span></a>
+    <div style="display:flex;align-items:center;gap:18px">
+      <a class="ghost hidem" href="play.html">ALREADY BOUGHT? PLAY</a>
+      <a class="btn buy" href="__STRIPE_LINK__">BUY <span class="price">$1.99</span></a>
+    </div>
+  </div>
+</header>
+
+<div class="hero" id="top">
+  <img class="bgimg pix" src="assets/shot-yard2.png" alt="">
+  <div class="wrap">
+    <img class="cover pix" src="assets/cover.png" alt="Prison Brawl cover art: P. Duffy and Big Dude square off in the Fort Dix prison yard" width="1152" height="648">
+    <div>
+      <span class="tag">PARODY ARCADE FIGHTER</span>
+      <h1>PRISON <em>BRAWL</em></h1>
+      <p class="sub">FORT DIX EDITION</p>
+      <p class="pitch">The yard got raided. The phones got taken. Somebody has to pay. Two heavyweights settle it 90s-arcade style across three rounds, from the yard to the SHU to the chow hall. Specials, supers, a lot of baby oil.</p>
+      <div class="buyrow">
+        <a class="btn big buy" href="__STRIPE_LINK__">BUY NOW <span class="price">$1.99</span></a>
+        <a class="ghost" href="#trailer">▶ WATCH TRAILER</a>
+      </div>
+      <p class="fine">One-time payment · Secure checkout by Stripe · Plays instantly in your browser</p>
+    </div>
+  </div>
+</div>
+
+<section id="trailer">
+  <div class="wrap">
+    <h2>CINEMATIC TRAILER</h2>
+    <p class="lede">Real in-game footage. Three rounds, three stages, one winner.</p>
+    <div class="crt">
+      <span class="live">NOW PLAYING</span>
+      <img class="pix" src="assets/trailer.webp" alt="Prison Brawl trailer: fight footage from the yard, the SHU and the chow hall" width="768" height="432" loading="lazy">
+    </div>
+  </div>
+</section>
+
+<section id="shots">
+  <div class="wrap">
+    <h2>SCREENSHOTS</h2>
+    <p class="lede">Click any shot to enlarge.</p>
+    <div class="shots">
+      <button><img class="pix" src="assets/shot-yard.png" alt="Round 1 in the prison yard: the Baby Oil Toss" loading="lazy"></button>
+      <button><img class="pix" src="assets/shot-shu.png" alt="Round 2 in the SHU: the Contraband Phone Shield" loading="lazy"></button>
+      <button><img class="pix" src="assets/shot-caf.png" alt="Final round in the chow hall: a super move" loading="lazy"></button>
+      <button><img class="pix" src="assets/shot-select.png" alt="Character select screen" loading="lazy"></button>
+      <button><img class="pix" src="assets/shot-yard2.png" alt="Mid-fight in the yard with the crowd cheering" loading="lazy"></button>
+      <button><img class="pix" src="assets/shot-victory.png" alt="Victory screen" loading="lazy"></button>
+    </div>
+  </div>
+</section>
+
+<section id="fighters">
+  <div class="wrap">
+    <h2>THE FIGHTERS</h2>
+    <p class="lede">Pick your side.</p>
+    <div class="fighters">
+      <div class="fighter p1">
+        <h3>P. DUFFY</h3>
+        <div class="role">OIL BARON OF THE YARD</div>
+        <div class="stat">POWER <span><i></i><i></i><i></i><i class="off"></i><i class="off"></i></span></div>
+        <div class="stat">SPEED <span><i></i><i></i><i></i><i></i><i></i></span></div>
+        <div class="stat" style="margin-bottom:16px">CLOUT <span><i></i><i></i><i></i><i></i><i></i></span></div>
+        <ul>
+          <li><b>SP1</b><span><strong>Baby Oil Toss</strong>: lobs a bottle that leaves a slick puddle. Step in it and you go down.</span></li>
+          <li><b>SP2</b><span><strong>Bad Boi Spin</strong>: a spinning kick that travels across the yard.</span></li>
+          <li><b>SUP</b><span><strong>Can't Stop Won't Stop</strong>: a 7-hit punch flurry that ends in a knockdown.</span></li>
+        </ul>
+      </div>
+      <div class="fighter p2">
+        <h3>BIG DUDE</h3>
+        <div class="role">PRESIDENT OF THE BLOCK</div>
+        <div class="stat">POWER <span><i></i><i></i><i></i><i></i><i></i></span></div>
+        <div class="stat">SPEED <span><i></i><i></i><i></i><i class="off"></i><i class="off"></i></span></div>
+        <div class="stat" style="margin-bottom:16px">CLOUT <span><i></i><i></i><i></i><i></i><i class="off"></i></span></div>
+        <ul>
+          <li><b>SP1</b><span><strong>Contraband Phone Shield</strong>: blocks everything and sends bottles flying back.</span></li>
+          <li><b>SP2</b><span><strong>Yard Boss Charge</strong>: a full-speed shoulder barge.</span></li>
+          <li><b>SUP</b><span><strong>Shower Room Slam</strong>: grab, lift, slam. Ignores blocking.</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap feat">
+    <div>
+      <h2>WHAT YOU GET</h2>
+      <ul>
+        <li>1 player vs CPU, or 2 players on one keyboard</li>
+        <li>Best-of-3 matches across 3 stages: The Yard, The SHU, and the Chow Hall final climax</li>
+        <li>Specials, super meter, blocking, knockdowns and K.O. slow-mo</li>
+        <li>Pixel art, chiptune music and arcade sound effects</li>
+        <li>No download or install: runs in Chrome, Safari, Firefox or Edge</li>
+        <li>Runs smoothly on older laptops</li>
+      </ul>
+    </div>
+    <img class="box pix" src="assets/boxart.png" alt="Prison Brawl box art" width="720" height="960" loading="lazy">
+  </div>
+</section>
+
+<section id="controls">
+  <div class="wrap">
+    <h2>CONTROLS</h2>
+    <p class="lede">Needs a keyboard (laptop or desktop). Hold back to block.</p>
+    <div class="controls">
+      <div class="ctl">
+        <h3 style="color:var(--red)">PLAYER 1</h3>
+        <table>
+          <tr><td>Move / jump / crouch</td><td><kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd></td></tr>
+          <tr><td>Punch / Kick</td><td><kbd>F</kbd> <kbd>G</kbd></td></tr>
+          <tr><td>Special 1 / Special 2</td><td><kbd>H</kbd> <kbd>R</kbd></td></tr>
+          <tr><td>Super (meter full)</td><td><kbd>T</kbd></td></tr>
+        </table>
+      </div>
+      <div class="ctl">
+        <h3 style="color:var(--blue)">PLAYER 2</h3>
+        <table>
+          <tr><td>Move / jump / crouch</td><td><kbd>←</kbd> <kbd>↑</kbd> <kbd>↓</kbd> <kbd>→</kbd></td></tr>
+          <tr><td>Punch / Kick</td><td><kbd>J</kbd> <kbd>K</kbd></td></tr>
+          <tr><td>Special 1 / Special 2</td><td><kbd>L</kbd> <kbd>U</kbd></td></tr>
+          <tr><td>Super (meter full)</td><td><kbd>I</kbd></td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta">
+  <div class="wrap">
+    <h2>STEP INTO THE YARD</h2>
+    <div class="price-big">$1.99</div>
+    <a class="btn big buy" href="__STRIPE_LINK__">BUY &amp; PLAY NOW</a>
+    <p class="fine">After checkout you're taken straight to the game. Bookmark that page; it's your copy.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>Prison Brawl: Fort Dix Edition is a parody. All characters are fictional, and any resemblance to real persons is satirical.</div>
+    <div>Payments processed by Stripe · <a class="ghost" href="play.html">PLAY</a></div>
+  </div>
+</footer>
+
+<div class="lightbox" id="lb"><img alt=""></div>
+<script>
+  const lb = document.getElementById('lb'), lbImg = lb.querySelector('img');
+  document.querySelectorAll('.shots button').forEach(b => b.addEventListener('click', () => {
+    const i = b.querySelector('img'); lbImg.src = i.src; lbImg.alt = i.alt; lbImg.className = 'pix'; lb.classList.add('on');
+  }));
+  lb.addEventListener('click', () => lb.classList.remove('on'));
+  addEventListener('keydown', e => { if (e.key === 'Escape') lb.classList.remove('on'); });
+</script>
+</body>
+</html>

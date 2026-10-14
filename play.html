@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Prison Brawl — Play</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+  :root { --bg: #0b0a12; --ink: #f4efe2; --muted: #a59fb5; --gold: #ffd84a; --red: #ff4d2e; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--ink); }
+  body { display: flex; align-items: center; justify-content: center; font: 16px/1.6 system-ui, sans-serif; padding: 0 16px; box-sizing: border-box; }
+  .box { max-width: 520px; text-align: center; }
+  h1 { font-family: "Press Start 2P", monospace; font-size: 20px; color: var(--gold); line-height: 1.5; margin: 0 0 16px; }
+  p { color: var(--muted); }
+  a.btn { display: inline-block; margin-top: 8px; padding: 14px 22px; background: var(--red); color: #fff; text-decoration: none;
+          font-family: "Press Start 2P", monospace; font-size: 12px; box-shadow: 0 4px 0 #8a1a0c; }
+  a.btn:hover { filter: brightness(1.1); }
+</style>
+</head>
+<body>
+<div class="box" id="msg">
+  <h1>LOADING…</h1>
+  <p>Unlocking your copy of Prison Brawl.</p>
+</div>
+<script>
+(async function () {
+  const msg = document.getElementById('msg');
+  const locked = (why) => {
+    msg.innerHTML = '<h1>PRISON BRAWL IS LOCKED</h1><p>' + why +
+      '</p><a class="btn" href="./">BUY FOR $1.99</a><p style="margin-top:24px;font-size:14px">Already bought it? Open the link from your Stripe confirmation page or receipt email in this browser.</p>';
+  };
+  let key = new URLSearchParams(location.search).get('k');
+  try { if (key) localStorage.setItem('pb_key', key); else key = localStorage.getItem('pb_key'); } catch (e) {}
+  if (!key || !/^[0-9a-f]{64}$/i.test(key)) return locked('This page needs the play link you get after purchase.');
+  if (!(window.crypto && crypto.subtle)) return locked('Your browser can\'t unlock the game. Try a current version of Chrome, Safari or Firefox.');
+  try {
+    const res = await fetch('game.bin', { cache: 'no-cache' });
+    if (!res.ok) throw new Error('download failed');
+    const buf = new Uint8Array(await res.arrayBuffer());
+    const raw = new Uint8Array(key.match(/../g).map(h => parseInt(h, 16)));
+    const k = await crypto.subtle.importKey('raw', raw, { name: 'AES-CBC' }, false, ['decrypt']);
+    const plain = await crypto.subtle.decrypt({ name: 'AES-CBC', iv: buf.slice(0, 16) }, k, buf.slice(16));
+    const html = new TextDecoder().decode(plain);
+    document.open(); document.write(html); document.close();
+  } catch (e) {
+    try { localStorage.removeItem('pb_key'); } catch (_) {}
+    locked('That play link isn\'t valid.');
+  }
+})();
+</script>
+</body>
+</html>
