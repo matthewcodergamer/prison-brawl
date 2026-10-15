@@ -124,6 +124,8 @@
   }
   @media (max-width: 480px) { .shots { grid-template-columns: 1fr; } .btn.big { font-size: 14px; padding: 16px 20px; } .price-big { font-size: 34px; } }
 </style>
+<script>window.goatcounter = { path: location.pathname };</script>
+<script data-goatcounter="https://prisonbrawl.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </head>
 <body>
 
@@ -132,7 +134,7 @@
     <a class="logo" href="#top">PRISON <span>BRAWL</span></a>
     <div style="display:flex;align-items:center;gap:18px">
       <a class="ghost hidem" href="play.html">ALREADY BOUGHT? PLAY</a>
-      <a class="btn buy" href="https://buy.stripe.com/4gM5kF3zh56v2oC7jo2ZO02">BUY <span class="price">$1.99</span></a>
+      <a class="btn buy" data-goatcounter-click="buy-header" href="https://buy.stripe.com/4gM5kF3zh56v2oC7jo2ZO02">BUY <span class="price">$1.99</span></a>
     </div>
   </div>
 </header>
@@ -148,7 +150,7 @@
       <p class="sub" style="color:var(--red);margin-top:-12px">DIDDY VERSUS DUDUS</p>
       <p class="pitch">The yard got raided. The phones got taken. Somebody has to pay. Two heavyweights settle it 90s-arcade style across three rounds, from the yard to the SHU to the chow hall. Specials, supers, a lot of baby oil.</p>
       <div class="buyrow">
-        <a class="btn big buy" href="https://buy.stripe.com/4gM5kF3zh56v2oC7jo2ZO02">BUY NOW <span class="price">$1.99</span></a>
+        <a class="btn big buy" data-goatcounter-click="buy-hero" href="https://buy.stripe.com/4gM5kF3zh56v2oC7jo2ZO02">BUY NOW <span class="price">$1.99</span></a>
         <a class="ghost" href="#trailer">▶ WATCH TRAILER</a>
       </div>
       <p class="fine">One-time payment · Secure checkout by Stripe · Plays instantly in your browser</p>
@@ -276,7 +278,7 @@
   <div class="wrap">
     <h2>STEP INTO THE YARD</h2>
     <div class="price-big">$1.99</div>
-    <a class="btn big buy" href="https://buy.stripe.com/4gM5kF3zh56v2oC7jo2ZO02">BUY &amp; PLAY NOW</a>
+    <a class="btn big buy" data-goatcounter-click="buy-bottom" href="https://buy.stripe.com/4gM5kF3zh56v2oC7jo2ZO02">BUY &amp; PLAY NOW</a>
     <p class="fine">After checkout you're taken straight to the game. Bookmark that page; it's your copy.</p>
   </div>
 </section>
@@ -295,9 +297,14 @@
     const i = b.querySelector('img'); lbImg.src = i.src; lbImg.alt = i.alt; lbImg.className = 'pix'; lb.classList.add('on');
   }));
   lb.addEventListener('click', () => lb.classList.remove('on'));
-  document.querySelectorAll('a.buy').forEach(a => a.addEventListener('click', e => {
-    if (a.getAttribute('href').indexOf('__STRIPE') === 0) { e.preventDefault(); alert('Checkout is being set up. Check back in a few minutes!'); }
-  }));
+  // Remember where the visitor came from (?utm_source=tiktok etc.) and pass it to Stripe,
+  // so each payment shows its platform as the "client reference ID".
+  let src = (new URLSearchParams(location.search).get('utm_source') || '').toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, 40);
+  try { if (src) sessionStorage.setItem('pb_src', src); else src = sessionStorage.getItem('pb_src') || ''; } catch (e) {}
+  if (!src && document.referrer && new URL(document.referrer).host !== location.host) try { src = 'ref-' + new URL(document.referrer).hostname.replace(/^www\./, '').replace(/[^a-z0-9-]/g, '-').slice(0, 36); } catch (e) {}
+  document.querySelectorAll('a.buy').forEach(a => {
+    if (src) { const u = new URL(a.href); u.searchParams.set('client_reference_id', src); a.href = u.toString(); }
+  });
   addEventListener('keydown', e => { if (e.key === 'Escape') lb.classList.remove('on'); });
 </script>
 </body>

@@ -31,6 +31,8 @@
       '</p><a class="btn" href="./">BUY FOR $1.99</a><p style="margin-top:24px;font-size:14px">Already bought it? Open the link from your Stripe confirmation page or receipt email in this browser.</p>';
   };
   let key = new URLSearchParams(location.search).get('k');
+  // Count arrivals from the Stripe redirect (key in URL) as "/play-unlocked"; the key itself is never sent.
+  if (key) try { fetch('https://prisonbrawl.goatcounter.com/count?p=%2Fplay-unlocked&t=Play%20unlocked&r=' + encodeURIComponent(document.referrer) + '&rnd=' + Math.random().toString(36).slice(2), { mode: 'no-cors', keepalive: true }); } catch (e) {}
   try { if (key) localStorage.setItem('pb_key', key); else key = localStorage.getItem('pb_key'); } catch (e) {}
   if (!key || !/^[0-9a-f]{64}$/i.test(key)) return locked('This page needs the play link you get after purchase.');
   if (!(window.crypto && crypto.subtle)) return locked('Your browser can\'t unlock the game. Try a current version of Chrome, Safari or Firefox.');
