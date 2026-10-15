@@ -281,6 +281,9 @@
     const i = b.querySelector('img'); lbImg.src = i.src; lbImg.alt = i.alt; lbImg.className = 'pix'; lb.classList.add('on');
   }));
   lb.addEventListener('click', () => lb.classList.remove('on'));
+  document.querySelectorAll('a.buy').forEach(a => a.addEventListener('click', e => {
+    if (a.getAttribute('href').indexOf('__STRIPE') === 0) { e.preventDefault(); alert('Checkout is being set up. Check back in a few minutes!'); }
+  }));
   addEventListener('keydown', e => { if (e.key === 'Escape') lb.classList.remove('on'); });
 </script>
 </body>
